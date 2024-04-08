@@ -1,34 +1,26 @@
-// Example model schema from the Drizzle docs
-// https://orm.drizzle.team/docs/sql-schema-declaration
-
-import { sql } from "drizzle-orm";
+import { drizzle } from 'drizzle-orm/vercel-postgres';
+import { sql } from "@vercel/postgres";
 import {
-  index,
-  pgTableCreator,
+  pgTable,
   serial,
+  text,
   timestamp,
-  varchar,
-} from "drizzle-orm/pg-core";
+  uniqueIndex,
+} from 'drizzle-orm/pg-core';
 
-/**
- * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
- * database instance for multiple projects.
- *
- * @see https://orm.drizzle.team/docs/goodies#multi-project-schema
- */
-export const createTable = pgTableCreator((name) => `mieru-landing_${name}`);
+export const db = drizzle(sql);
 
-export const posts = createTable(
-  "post",
+export const Emails = pgTable(
+  'users',
   {
-    id: serial("id").primaryKey(),
-    name: varchar("name", { length: 256 }),
-    createdAt: timestamp("created_at")
-      .default(sql`CURRENT_TIMESTAMP`)
-      .notNull(),
-    updatedAt: timestamp("updatedAt"),
+    id: serial('id').primaryKey(),
+    email: text('email').notNull(),
+    createdAt: timestamp('createdAt').defaultNow().notNull(),
   },
-  (example) => ({
-    nameIndex: index("name_idx").on(example.name),
-  })
+  (users) => {
+    return {
+      uniqueIdx: uniqueIndex('unique_idx').on(users.email),
+    };
+  },
 );
+
