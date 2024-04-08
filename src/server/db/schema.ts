@@ -11,15 +11,15 @@ import {
 export const db = drizzle(sql);
 
 export const Emails = pgTable(
-  'users',
+  'emails',
   {
     id: serial('id').primaryKey(),
     email: text('email').notNull(),
     createdAt: timestamp('createdAt').defaultNow().notNull(),
   },
-  (users) => {
+  (entries) => {
     return {
-      uniqueIdx: uniqueIndex('unique_idx').on(users.email),
+      uniqueIdx: uniqueIndex('unique_idx').on(entries.email),
     };
   },
 );
